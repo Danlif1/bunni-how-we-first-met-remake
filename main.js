@@ -6,23 +6,77 @@ function setup() {
   createCanvas(right, bottom);
   bunni1 = new bunni(70,70,30);
   // land = {centerX,centerY,radius,Color}
-  landList = [[70,70,50],[150,150,15],[170,170,15],[200,200,35]];
+  landList = [];
+  land1 = new Land(70,70,70,70,'lime');
+  append(landList,land1);
+  land2 = new Land(100,100,70,70,'lime');
+  append(landList,land2);
+
+
 }
 function draw() {
   background(220);
   
   for(let i = 0; i < landList.length; i++){
-    fill('lime')
-    circle(landList[i][0],landList[i][1],landList[i][2]*2);
+    landList[i].display();
   }
   bunni1.display();
   bunni1.move();
 }
 
-function createLand(x,y,r){
-  append(landList,[x,y,r]);
+function createLand(x,y,w,h,c){
+  land = new Land(x,y,w,h,c);
+  append(landList,land);
 }
 
+
+function checkPoint(x, y, h, w, a, b) {
+ 
+    let res = ((x-a)*(x-a))/(w*w/4)+((y-b)*(y-b))/(h*h/4);
+    return res;
+}
+function checker(land,a,b,r){
+  let helper = r/Math.sqrt(2);
+  let x = land.x;
+  let y = land.y;
+  let h = land.h;
+  let w = land.w;
+  if(checkPoint(x,y,h,w,a-r,b) >= 1){
+    return false;
+  } else if(checkPoint(x,y,h,w,a,b+r) >= 1){
+    return false;
+  } else if(checkPoint(x,y,h,w,a,b-r) >= 1){
+    return false;
+  } else if(checkPoint(x,y,h,w,a+r,b) >= 1){
+    return false;
+  } else if(checkPoint(x,y,h,w,helper+a,helper+b) >= 1){
+    return false;
+  } else if(checkPoint(x,y,h,w,-helper+a,helper+b) >= 1){
+    return false;
+  } else if(checkPoint(x,y,h,w,-helper+a,-helper+b) >= 1){
+    return false;
+  } else if(checkPoint(x,y,h,w,helper+a,-helper+b) >= 1){
+    return false;
+  } else {
+    return true;
+  }
+}
+ 
+class Land{
+  // x,y = place on screen, w,h =  ellipse width and height, c = color
+  constructor(x,y,w,h,c){ 
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.c = c;
+  }
+  display() {
+    fill(this.c);
+    ellipse(this.x,this.y,this.w,this.h);
+  }
+  
+}
 class bunni{
   constructor(x,y) {
     this.x = x;
@@ -33,9 +87,10 @@ class bunni{
   }
   InLand(placeX = this.x, placeY = this.y){
     let tempList = [];
+    let helper = this.r/Math.sqrt(2);
     for(let i = 0; i < landList.length; i++){
-      if ((placeX - landList[i][0]) * (placeX - landList[i][0]) +
-        (placeY - landList[i][1]) * (placeY - landList[i][1]) <= landList[i][2] * landList[i][2]){
+      let land = landList[i];
+      if (checker(land,placeX,placeY,this.r)){
         append(tempList,i);
       }
     }
