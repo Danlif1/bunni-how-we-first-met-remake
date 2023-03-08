@@ -3,20 +3,27 @@ function setup() {
   right = 400;
   left = 0;
   ceilling = 0;
+  translatedX = 130;
+  translatedY = 130;
   createCanvas(right, bottom);
   bunni1 = new bunni(70,70,30);
   // land = {centerX,centerY,radius,Color}
   landList = [];
-  land1 = new Land(70,70,70,70,'lime');
+  land1 = new Land(70,70,100,70,'lime');
   append(landList,land1);
   land2 = new Land(100,100,70,70,'lime');
   append(landList,land2);
-
+  
 
 }
 function draw() {
   background(220);
-  
+  translate(translatedX,translatedY);
+  if(landList.length < 10){
+    createLand(random(400),random(400),random(50,100),random(50,100),'lime');
+  } else if(landList.length === 10) {
+    createLand(130,130,70,70,'lime');
+  }
   for(let i = 0; i < landList.length; i++){
     landList[i].display();
   }
@@ -73,6 +80,7 @@ class Land{
   }
   display() {
     fill(this.c);
+    stroke('lime');
     ellipse(this.x,this.y,this.w,this.h);
   }
   
@@ -95,6 +103,8 @@ class bunni{
       }
     }
     this.insideList = tempList;
+    fill('blue')
+    circle(placeX,placeY,10);
     if(this.insideList.length){
       return true;
     } else {
@@ -103,12 +113,14 @@ class bunni{
   }
   move() {
     if(mouseIsPressed){
-      var placeX = (this.x*29+mouseX)/30;
-      var placeY = (this.y*29+mouseY)/30;
+      var placeX = (this.x*29+mouseX-translatedX)/30;
+      var placeY = (this.y*29+mouseY-translatedY)/30;
       
       if (this.InLand(placeX,placeY)){ //checkIfIn(placeX,placeY)){
         this.x = placeX;
         this.y = placeY;
+        translatedX = bottom/2 - this.x;
+        translatedY = right/2 - this.y;
       } else {
         // wait
       }
@@ -117,6 +129,7 @@ class bunni{
 
   display() {
     fill('white');
+    stroke('black');
     circle(this.x, this.y, this.r*2);
   }
 }
