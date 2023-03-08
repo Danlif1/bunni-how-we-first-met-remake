@@ -13,7 +13,9 @@ function setup() {
   append(landList,land1);
   land2 = new Land(100,100,70,70,'lime');
   append(landList,land2);
-  
+  bubbleList = [];
+  bubble = new bubble(20,20,'shop');
+  append(bubbleList,bubble);
 
 }
 function draw() {
@@ -26,6 +28,12 @@ function draw() {
   }
   for(let i = 0; i < landList.length; i++){
     landList[i].display();
+  }
+  for(let i = 0; i < bubbleList.length; i++){
+    bubbleList[i].display();
+  }
+  for(let i = 0; i < bubbleList.length; i++){
+    bubbleList[i].checkClick();
   }
   bunni1.display();
   bunni1.move();
@@ -80,7 +88,6 @@ class Land{
   }
   display() {
     fill(this.c);
-    stroke('lime');
     ellipse(this.x,this.y,this.w,this.h);
   }
   
@@ -91,6 +98,7 @@ class bunni{
     this.y = y;
     this.r = 10
     this.insideList = [];
+    this.itemList = [];
     this.speed = 5;
   }
   InLand(placeX = this.x, placeY = this.y){
@@ -131,5 +139,43 @@ class bunni{
     fill('white');
     stroke('black');
     circle(this.x, this.y, this.r*2);
+  }
+}
+class bubble{
+  constructor(x,y,s){
+    this.x = x;
+    this.y = y;
+    this.s = s;
+    this.r = 10;
+  }
+  checkClick(){
+    if(mouseIsPressed){
+      if(checkPoint(this.x,this.y,this.r*2,this.r*2,mouseX-translatedX,mouseY-translatedY) <= 1){
+        let index = bubbleList.indexOf(this);
+        append(bunni1.itemList,bubbleList[index]);
+        bubbleList.splice(index,1);
+      }
+    }
+  }
+  display(){
+    fill('purple');
+    circle(this.x,this.y,this.r*2);
+    if(this.s === 'shop'){
+      fill('red');
+      circle(this.x,this.y,this.r)
+    }
+  }
+}
+class shop{
+  constructor(x,y){
+    this.x = x;
+    this.y = y;
+    this.r = 15;
+    this.c = 'red'
+  }
+  display(){
+    fill(this.c);
+    stroke('black');
+    circle(this.x,this.y, this.r*2)
   }
 }
